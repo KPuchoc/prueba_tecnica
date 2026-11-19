@@ -36,6 +36,32 @@ app/Models/Personaje.php                                          -> se indican 
 docker compose exec backend php artisan migrate                   -> crea la tabla en MySQL
 docker compose exec backend php artisan migrate:rollback          -> deshace la última migración (para corregirla y volver a ejecutar migrate)
 
+## Paso 6: API
+docker compose exec backend php artisan make:request PersonajeRequest              -> crea la validación del formulario
+docker compose exec backend php artisan make:request ImportarPersonajeRequest      -> crea la validación del ID de SWAPI
+docker compose exec backend php artisan make:class Repositories/PersonajeRepository -> crea el repositorio
+docker compose exec backend php artisan make:class Services/PersonajeService       -> crea el servicio de personajes
+docker compose exec backend php artisan make:class Services/SwapiService           -> crea el servicio que consulta SWAPI
+docker compose exec backend php artisan make:controller PersonajeController        -> crea el controlador
+docker compose exec backend php artisan make:command ImportarPersonajes            -> crea el comando para importar varios personajes
+docker compose exec backend php artisan make:test PersonajeTest                    -> crea las pruebas del CRUD
+docker compose exec backend php artisan make:test ImportarPersonajeTest            -> crea las pruebas de la importación
+app/Models/Personaje.php                                  -> géneros y máximos de altura y masa
+app/Http/Requests/PersonajeRequest.php                    -> reglas de validación y mensajes en español
+app/Http/Requests/ImportarPersonajeRequest.php            -> el ID de SWAPI debe estar entre 1 y 83
+app/Repositories/PersonajeRepository.php                  -> consultas a la base de datos (solo personajes con estado = 1)
+app/Services/PersonajeService.php                         -> listar, buscar, crear, actualizar, eliminar (estado = 0) e importar
+app/Services/SwapiService.php                             -> GET a SWAPI, traduce los campos y maneja errores (timeout, 404)
+app/Http/Controllers/PersonajeController.php              -> recibe la petición, llama al servicio y responde
+app/Console/Commands/ImportarPersonajes.php               -> importa varios IDs desde la terminal
+routes/web.php                                            -> las 7 rutas (CRUD e importar)
+app/Http/Middleware/HandleInertiaRequests.php             -> comparte los mensajes de éxito y error con Vue
+bootstrap/app.php                                         -> quita el token CSRF de las rutas de personajes
+config/services.php, .env y .env.example                  -> URL de SWAPI (SWAPI_URL)
+tests/Feature/ExampleTest.php y tests/Unit (borrados)     -> ejemplos de Laravel que no se usan
+docker compose exec backend php artisan test                      -> ejecuta las pruebas
+docker compose exec backend php artisan personajes:importar 1 2 3 -> importa los personajes 1, 2 y 3 desde SWAPI
+
 ## Referencias
 https://hub.docker.com/_/php       -> imagen de PHP (Dockerfile del backend)
 https://hub.docker.com/_/mysql     -> imagen de MySQL (contenedor db)
@@ -45,3 +71,5 @@ https://docs.docker.com/compose/   -> documentación de Docker Compose
 https://inertiajs.com              -> documentación de Inertia
 https://vuejs.org                  -> documentación de Vue
 https://tailwindcss.com            -> documentación de Tailwind CSS
+https://swapi.py4e.com/documentation -> documentación de SWAPI
+https://laravel.com/docs/http-client -> cliente HTTP de Laravel (Http::get)

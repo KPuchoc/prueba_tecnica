@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'swapi' => [
+        'url' => env('SWAPI_URL'),
+    ],
+
 ];
