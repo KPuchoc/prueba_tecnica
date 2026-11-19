@@ -80,5 +80,9 @@ http://localhost:8000
 ## Tecnologías
 
 - Laravel 13
+- Vue.js 3
+- Inertia.js
+- Tailwind CSS
+- Vite
 - MySQL
 - Docker
