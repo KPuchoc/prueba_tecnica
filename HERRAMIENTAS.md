@@ -23,6 +23,12 @@ docker compose exec backend composer require inertiajs/inertia-laravel          
 docker compose exec backend php artisan inertia:middleware                      -> crea el middleware de Inertia
 docker compose exec frontend npm install vue @vitejs/plugin-vue @inertiajs/vue3  -> instala Vue e Inertia para Vue
 
+## Paso 4: Conectar Laravel con Vue
+New-Item resources\views\app.blade.php     -> crea la vista principal donde Inertia carga Vue (se escribe a mano)
+resources/js/app.js                        -> arranca Vue con Inertia y busca las páginas en resources/js/Pages
+vite.config.js                             -> agrega el plugin de Vue
+bootstrap/app.php                          -> registra el middleware de Inertia
+
 ## Referencias
 https://hub.docker.com/_/php       -> imagen de PHP (Dockerfile del backend)
 https://hub.docker.com/_/mysql     -> imagen de MySQL (contenedor db)
