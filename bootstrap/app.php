@@ -18,8 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->validateCsrfTokens(except: [
-            'personajes',
-            'personajes/*',
+            'crearPersonaje',
+            'actualizar-personaje/*',
+            'eliminar-personaje/*',
+            'importarPersonaje',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

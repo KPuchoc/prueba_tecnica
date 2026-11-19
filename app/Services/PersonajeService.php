@@ -14,9 +14,9 @@ class PersonajeService
         private SwapiService $swapiService
     ) {}
 
-    public function listar(): LengthAwarePaginator
+    public function listar(?string $buscar, ?string $genero): LengthAwarePaginator
     {
-        return $this->personajeRepository->listarActivos();
+        return $this->personajeRepository->listarActivos($buscar, $genero);
     }
 
     public function buscar(int $id): Personaje
@@ -43,6 +43,18 @@ class PersonajeService
         $personaje->estado = false;
 
         $this->personajeRepository->guardar($personaje);
+    }
+
+    public function listarPersonajesSwapi(int $pagina): array
+    {
+        $resultado = $this->swapiService->listarPersonajes($pagina);
+        $importados = $this->personajeRepository->swapiIdsImportados();
+
+        foreach ($resultado['personajes'] as $indice => $personaje) {
+            $resultado['personajes'][$indice]['importado'] = in_array($personaje['id'], $importados);
+        }
+
+        return $resultado;
     }
 
     public function importarDesdeSwapi(int $swapiId): Personaje

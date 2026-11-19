@@ -12,7 +12,6 @@ laravel new prueba_tecnica                 -> crea el proyecto
 mkdir docker\backend                       -> crea la carpeta del contenedor backend
 New-Item docker\backend\Dockerfile         -> crea el Dockerfile del backend (se escribe a mano: PHP + extensiones + Composer)
 New-Item docker-compose.yml                -> crea el archivo de los 3 contenedores (se escribe a mano: db, backend, frontend)
-vite.config.js (editado a mano)            -> configura Vite para que funcione dentro de Docker
 docker compose up -d --build               -> construye las imágenes y levanta los contenedores
 docker compose ps                          -> muestra los contenedores y su estado
 docker compose logs backend                -> muestra los mensajes del backend
@@ -61,6 +60,24 @@ config/services.php, .env y .env.example                  -> URL de SWAPI (SWAPI
 tests/Feature/ExampleTest.php y tests/Unit (borrados)     -> ejemplos de Laravel que no se usan
 docker compose exec backend php artisan test                      -> ejecuta las pruebas
 docker compose exec backend php artisan personajes:importar 1 2 3 -> importa los personajes 1, 2 y 3 desde SWAPI
+
+## Paso 7: UI
+resources/js/Layouts/AppLayout.vue            -> cabecera y mensajes de éxito o error
+resources/js/Components/Modal.vue             -> ventana modal base reutilizable
+resources/js/Components/PersonajeForm.vue     -> formulario reutilizable (crear y editar)
+resources/js/Components/ImportModal.vue       -> importar por ID o desde la lista de SWAPI
+resources/js/Components/Pagination.vue        -> paginación reutilizable
+resources/js/Components/Spinner.vue           -> indicador de carga reutilizable
+resources/js/Pages/Personajes/Index.vue       -> listado con código, fechas, búsqueda, filtro y modal de eliminar
+resources/js/Pages/Personajes/Create.vue      -> página crear
+resources/js/Pages/Personajes/Edit.vue        -> página editar
+resources/css/app.css                         -> Tailwind solo revisa resources/ (más rápido en Docker)
+docker-compose.yml                            -> el contenedor frontend compila con npm run build y termina
+app/Repositories/PersonajeRepository.php      -> búsqueda por código o nombre y filtro por género
+app/Services/SwapiService.php                 -> lista de personajes de SWAPI por página
+app/Http/Middleware/HandleInertiaRequests.php -> sin versión de assets (Postman funciona solo con X-Inertia: true)
+routes/web.php y PersonajeController.php      -> rutas y métodos en español (listarPersonajes, crearPersonaje...)
+docker compose up -d frontend                 -> vuelve a compilar Vue después de cambiar un archivo .vue
 
 ## Referencias
 https://hub.docker.com/_/php       -> imagen de PHP (Dockerfile del backend)

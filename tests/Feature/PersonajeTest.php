@@ -12,20 +12,20 @@ class PersonajeTest extends TestCase
 
     public function test_crea_un_personaje_con_datos_validos(): void
     {
-        $respuesta = $this->post('/personajes', [
+        $respuesta = $this->post('/crearPersonaje', [
             'nombre' => 'Mi personaje',
             'altura' => 180,
             'masa' => 80,
             'genero' => 'masculino',
         ]);
 
-        $respuesta->assertRedirect('/personajes');
+        $respuesta->assertRedirect('/listaPersonajes');
         $this->assertDatabaseHas('personajes', ['nombre' => 'Mi personaje', 'estado' => true]);
     }
 
     public function test_no_crea_un_personaje_con_datos_invalidos(): void
     {
-        $respuesta = $this->post('/personajes', [
+        $respuesta = $this->post('/crearPersonaje', [
             'nombre' => 'Lu',
             'altura' => 350,
             'genero' => 'otro',
@@ -39,7 +39,7 @@ class PersonajeTest extends TestCase
     {
         $personaje = Personaje::create(['nombre' => 'Mi personaje', 'genero' => 'n/a']);
 
-        $this->put("/personajes/{$personaje->id}", ['nombre' => 'Nombre nuevo', 'genero' => 'femenino']);
+        $this->put("/actualizar-personaje/{$personaje->id}", ['nombre' => 'Nombre nuevo', 'genero' => 'femenino']);
 
         $this->assertDatabaseHas('personajes', ['id' => $personaje->id, 'nombre' => 'Nombre nuevo']);
     }
@@ -48,7 +48,7 @@ class PersonajeTest extends TestCase
     {
         $personaje = Personaje::create(['nombre' => 'Mi personaje', 'genero' => 'n/a']);
 
-        $this->delete("/personajes/{$personaje->id}");
+        $this->delete("/eliminar-personaje/{$personaje->id}");
 
         $this->assertDatabaseHas('personajes', ['id' => $personaje->id, 'estado' => false]);
     }

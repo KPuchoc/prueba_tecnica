@@ -26,7 +26,7 @@ class ImportarPersonajeTest extends TestCase
             '*/planets/24/' => Http::response(['name' => 'Nal Hutta']),
         ]);
 
-        $this->post('/personajes/importar', ['swapi_id' => 16]);
+        $this->post('/importarPersonaje', ['swapi_id' => 16]);
 
         $this->assertDatabaseHas('personajes', [
             'nombre' => 'Jabba Desilijic Tiure',
@@ -43,7 +43,7 @@ class ImportarPersonajeTest extends TestCase
     {
         Personaje::create(['nombre' => 'Luke Skywalker', 'genero' => 'masculino', 'origen_swapi' => true, 'swapi_id' => 1]);
 
-        $respuesta = $this->post('/personajes/importar', ['swapi_id' => 1]);
+        $respuesta = $this->post('/importarPersonaje', ['swapi_id' => 1]);
 
         $respuesta->assertSessionHasErrors(['swapi_id' => 'Luke Skywalker ya fue importado.']);
         $this->assertDatabaseCount('personajes', 1);
@@ -53,7 +53,7 @@ class ImportarPersonajeTest extends TestCase
     {
         Http::fake(['*' => Http::response(['detail' => 'Not found'], 404)]);
 
-        $respuesta = $this->post('/personajes/importar', ['swapi_id' => 17]);
+        $respuesta = $this->post('/importarPersonaje', ['swapi_id' => 17]);
 
         $respuesta->assertSessionHasErrors(['swapi_id' => 'No existe un personaje con el ID 17 en SWAPI.']);
     }
@@ -62,14 +62,38 @@ class ImportarPersonajeTest extends TestCase
     {
         Http::fake(['*' => Http::failedConnection()]);
 
-        $respuesta = $this->post('/personajes/importar', ['swapi_id' => 1]);
+        $respuesta = $this->post('/importarPersonaje', ['swapi_id' => 1]);
 
         $respuesta->assertSessionHasErrors(['swapi_id' => 'SWAPI no responde. Intenta de nuevo en unos minutos.']);
     }
 
+    public function test_lista_personajes_de_swapi_y_marca_los_importados(): void
+    {
+        Http::fake([
+            '*/people/*' => Http::response([
+                'next' => 'https://swapi.py4e.com/api/people/?page=2',
+                'results' => [
+                    ['name' => 'Luke Skywalker', 'url' => 'https://swapi.py4e.com/api/people/1/'],
+                    ['name' => 'C-3PO', 'url' => 'https://swapi.py4e.com/api/people/2/'],
+                ],
+            ]),
+        ]);
+        Personaje::create(['nombre' => 'Luke Skywalker', 'genero' => 'masculino', 'origen_swapi' => true, 'swapi_id' => 1]);
+
+        $respuesta = $this->getJson('/listaPersonajesSwapi?pagina=1');
+
+        $respuesta->assertOk()->assertJson([
+            'hay_siguiente' => true,
+            'personajes' => [
+                ['id' => 1, 'nombre' => 'Luke Skywalker', 'importado' => true],
+                ['id' => 2, 'nombre' => 'C-3PO', 'importado' => false],
+            ],
+        ]);
+    }
+
     public function test_valida_que_el_id_este_entre_1_y_83(): void
     {
-        $respuesta = $this->post('/personajes/importar', ['swapi_id' => 84]);
+        $respuesta = $this->post('/importarPersonaje', ['swapi_id' => 84]);
 
         $respuesta->assertSessionHasErrors(['swapi_id' => 'El ID de SWAPI debe estar entre 1 y 83.']);
     }
