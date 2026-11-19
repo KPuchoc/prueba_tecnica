@@ -13,6 +13,20 @@
 - Node.js 22+
 - MySQL 8+
 
+
+## Instalación con Docker
+
+```bash
+git clone https://github.com/KPuchoc/prueba_tecnica.git
+cd prueba_tecnica
+cp .env.example .env
+docker compose up -d --build
+```
+
+La primera vez tarda unos minutos. Cuando `docker compose logs backend` muestre "Server running", acceder a http://localhost:8000
+
+Para apagar: `docker compose down`
+
 ## Instalación
 
 1. Clonar repositorio
@@ -67,3 +81,4 @@ http://localhost:8000
 
 - Laravel 13
 - MySQL
+- Docker
