@@ -29,6 +29,13 @@ resources/js/app.js                        -> arranca Vue con Inertia y busca la
 vite.config.js                             -> agrega el plugin de Vue
 bootstrap/app.php                          -> registra el middleware de Inertia
 
+## Paso 5: Base de datos
+docker compose exec backend php artisan make:model Personaje -m   -> crea el modelo Personaje y su migración
+database/migrations/..._create_personajes_table.php               -> se agregan los campos de la tabla
+app/Models/Personaje.php                                          -> se indican los campos que se pueden guardar
+docker compose exec backend php artisan migrate                   -> crea la tabla en MySQL
+docker compose exec backend php artisan migrate:rollback          -> deshace la última migración (para corregirla y volver a ejecutar migrate)
+
 ## Referencias
 https://hub.docker.com/_/php       -> imagen de PHP (Dockerfile del backend)
 https://hub.docker.com/_/mysql     -> imagen de MySQL (contenedor db)
